@@ -11,6 +11,17 @@ Prepare configuration files
 cp -r ./cnf_example ./cnf
 ```
 
+## Quick Start 
+
+```bash
+openssl genrsa -out ./output/ca.key 4096
+openssl req -new -key ./output/ca.key -out ./output/ca.csr -config ./cnf/ca.ini
+openssl x509 -req -in ./output/ca.csr -signkey ./output/ca.key -out ./output/ca.crt -days 36500 -extensions v3_ca -extfile ./cnf/ca.ini
+openssl genrsa -out ./output/server.key 4096
+openssl req -new -key ./output/server.key -out ./output/server.csr -config ./cnf/server.ini
+openssl x509 -req -in ./output/server.csr -CA ./output/ca.crt -CAkey ./output/ca.key -CAcreateserial -out ./output/server.crt -days 36500 -extensions v3_req -extfile ./cnf/server.ini
+```
+
 ## Generate CA 
 
 Generate CA private key
