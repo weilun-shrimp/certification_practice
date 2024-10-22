@@ -20,6 +20,7 @@ openssl x509 -req -in ./output/ca.csr -signkey ./output/ca.key -out ./output/ca.
 openssl genrsa -out ./output/server.key 4096
 openssl req -new -key ./output/server.key -out ./output/server.csr -config ./cnf/server.ini
 openssl x509 -req -in ./output/server.csr -CA ./output/ca.crt -CAkey ./output/ca.key -CAcreateserial -out ./output/server.crt -days 36500 -extensions v3_req -extfile ./cnf/server.ini
+cat ./output/server.crt ./output/ca.crt > ./output/server_fullchain.crt
 ```
 
 ## Generate CA 
@@ -62,4 +63,9 @@ openssl req -new -key ./output/server.key -out ./output/server.csr -config ./cnf
 Generate server Ccertificate - The self-signed server certificate.
 ```bash
 openssl x509 -req -in ./output/server.csr -CA ./output/ca.crt -CAkey ./output/ca.key -CAcreateserial -out ./output/server.crt -days 36500 -extensions v3_req -extfile ./cnf/server.ini
+```
+
+Concatenate Server | CA Certificates
+```bash
+cat ./output/server.crt ./output/ca.crt > ./output/server_fullchain.crt
 ```
