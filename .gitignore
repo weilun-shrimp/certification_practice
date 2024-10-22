@@ -1,1 +1,3 @@
 cnf/
+output/*
+!output/.gitkeep
