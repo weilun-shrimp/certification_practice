@@ -23,49 +23,82 @@ openssl x509 -req -in ./output/server.csr -CA ./output/ca.crt -CAkey ./output/ca
 cat ./output/server.crt ./output/ca.crt > ./output/server_fullchain.crt
 ```
 
-## Generate CA 
+## Generate Root CA 
 
-Generate CA private key
+Generate Root CA private key
 ```bash
 # password protected
-openssl genrsa -aes256 -out ./output/ca.key 4096
+openssl genrsa -aes256 -out ./output/root_ca.key 4096
 
 # without password protected
-openssl genrsa -out ./output/ca.key 4096
+openssl genrsa -out ./output/root_ca.key 4096
 ```
 
-Generate CA CSR - The Certificate Signing Request for the CA.
+Generate Root CA CSR - The Certificate Signing Request for the Root CA.
 ```bash
-openssl req -new -key ./output/ca.key -out ./output/ca.csr -config ./cnf/ca.ini
+openssl req -new -key ./output/root_ca.key -out ./output/root_ca.csr -config ./cnf/root_ca.ini
 ```
 
-Generate CA Ccertificate - The self-signed CA certificate.
+Generate Root CA Ccertificate - The self-signed Root CA certificate.
 ```bash
-openssl x509 -req -in ./output/ca.csr -signkey ./output/ca.key -out ./output/ca.crt -days 36500 -extensions v3_ca -extfile ./cnf/ca.ini
+openssl x509 -req -in ./output/root_ca.csr -signkey ./output/root_ca.key -out ./output/root_ca.crt -days 36500 -extensions v3_ca -extfile ./cnf/root_ca.ini
 ```
 
-## Generate Server
-
-Generate server private key, password is additional - Your private key for the server (password protected).
+## Generate Intermediate CA
+Generate Intermediate CA private key
 ```bash
 # password protected
-openssl genrsa -aes256 -out ./output/server.key 4096
+openssl genrsa -out -aes256 ./output/intermediate_ca.key 4096
 
 # without password protected
-openssl genrsa -out ./output/server.key 4096
+openssl genrsa -out ./output/intermediate_ca.key 4096
 ```
 
-Generate server CSR - The Certificate Signing Request for the server.
+Generate Intermediate CA CSR - The Certificate Signing Request for the Intermediate CA.
 ```bash
-openssl req -new -key ./output/server.key -out ./output/server.csr -config ./cnf/server.ini
+openssl req -new -key ./output/intermediate_ca.key -out ./output/intermediate_ca.csr -config ./cnf/intermediate_ca.ini
 ```
 
-Generate server Ccertificate - The self-signed server certificate.
+Generate Intermediate CA Ccertificate - The self-signed Intermediate CA certificate.
 ```bash
-openssl x509 -req -in ./output/server.csr -CA ./output/ca.crt -CAkey ./output/ca.key -CAcreateserial -out ./output/server.crt -days 36500 -extensions v3_req -extfile ./cnf/server.ini
+openssl x509 -req -in ./output/intermediate_ca.csr -CA ./output/root_ca.crt -CAkey ./output/root_ca.key -CAcreateserial -out ./output/intermediate_ca.crt -days 36500 -extensions v3_intermediate_ca -extfile ./cnf/intermediate_ca.ini
 ```
 
-Concatenate Server | CA Certificates
+Concatenate Intermediate CA | CA Certificates
 ```bash
-cat ./output/server.crt ./output/ca.crt > ./output/server_fullchain.crt
+cat ./output/intermediate_ca.crt ./output/root_ca.crt > ./output/intermediate_ca_fullchain.crt
+```
+
+## Generate Leaf
+
+Generate leaf private key, password is additional - Your private key for the server (password protected).
+```bash
+# password protected
+openssl genrsa -aes256 -out ./output/leaf.key 4096
+
+# without password protected
+openssl genrsa -out ./output/leaf.key 4096
+```
+
+Generate leaf CSR - The Certificate Signing Request for the leaf.
+```bash
+openssl req -new -key ./output/leaf.key -out ./output/leaf.csr -config ./cnf/leaf.ini
+```
+
+Generate leaf Ccertificate - The self-signed leaf certificate.
+```bash
+# from root_ca
+openssl x509 -req -in ./output/leaf.csr -CA ./output/root_ca.crt -CAkey ./output/root_ca.key -CAcreateserial -out ./output/leaf.crt -days 36500 -extensions v3_req -extfile ./cnf/leaf.ini
+
+# from intermediate ca
+openssl x509 -req -in ./output/leaf.csr -CA ./output/intermediate_ca.crt -CAkey ./output/intermediate_ca.key -CAcreateserial -out ./output/leaf.crt -days 36500 -extensions v3_req -extfile ./cnf/leaf.ini
+```
+
+Concatenate leaf | CA Certificates
+```bash
+# from root_ca
+cat ./output/leaf.crt ./output/root_ca.crt > ./output/leaf_fullchain.crt
+
+# from intermediate ca
+cat ./output/leaf.crt ./output/intermediate_ca_fullchain.crt > ./output/leaf_fullchain.crt
 ```
