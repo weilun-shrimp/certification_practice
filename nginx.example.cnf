@@ -40,14 +40,15 @@ server {
 
 	ssl_certificate /var/tls/nginx.crt;
 	ssl_certificate_key /var/tls/nginx.key;
+	# ssl_password_file /var/tls/nginx_key_password.txt;
 
-	# ssl_trusted_certificate /var/tls/client_ca_fullchain.crt;  # Root and intermediate certificates
+	# ssl_trusted_certificate /var/tls/root_ca.crt;  # Root and intermediate certificates
 
 	# SSL protocol settings
 	ssl_protocols TLSv1.2 TLSv1.3;  # Enable only strong protocols
 
 	# Path to the CA certificate used to verify the client's certificate
-	ssl_client_certificate /var/tls/client_ca_fullchain.crt;  # The CA certificate that signed the client certs
+	ssl_client_certificate /var/tls/client_ca.crt;  # The CA certificate that signed the client certs
 	ssl_verify_client on;  # This forces the client to present a certificate
 
 	root /var/www/html;
