@@ -48,7 +48,7 @@ openssl x509 -req -in ./output/root_ca.csr -signkey ./output/root_ca.key -out ./
 Generate Intermediate CA private key
 ```bash
 # password protected
-openssl genrsa -out -aes256 ./output/intermediate_ca.key 4096
+openssl genrsa -aes256 -out ./output/intermediate_ca.key 4096
 
 # without password protected
 openssl genrsa -out ./output/intermediate_ca.key 4096
