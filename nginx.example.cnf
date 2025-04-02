@@ -42,7 +42,7 @@ server {
 	ssl_certificate_key /var/tls/nginx.key;
 	# ssl_password_file /var/tls/nginx_key_password.txt;
 
-	# ssl_trusted_certificate /var/tls/root_ca.crt;  # Root and intermediate certificates
+	# ssl_trusted_certificate /var/tls/root_ca.crt;  # Root and intermediate certificates(chained cert file)
 
 	# SSL protocol settings
 	ssl_protocols TLSv1.2 TLSv1.3;  # Enable only strong protocols
