@@ -42,7 +42,20 @@ server {
 	ssl_certificate_key /var/tls/nginx.key;
 	# ssl_password_file /var/tls/nginx_key_password.txt;
 
-	# ssl_trusted_certificate /var/tls/root_ca.crt;  # Root CA - signed for clients or client's intermediates
+
+	# ssl_trusted_certificate
+	#
+	# Option1. Root CA - signed for clients or client's intermediates (Not recommend)
+	# ssl_trusted_certificate /var/tls/root_ca.crt;  
+	#
+	# Option2. Full trust chain leading up to the Root CA that issued the client certificates. Like downbelow.
+	# # -----BEGIN CERTIFICATE-----
+	# # # Intermediate Client CA
+	# # -----END CERTIFICATE-----
+	# # -----BEGIN CERTIFICATE-----
+	# # # Root CA
+	# # -----END CERTIFICATE-----
+	# ssl_trusted_certificate /var/tls/client-ca-chain.crt;  
 
 	# SSL protocol settings
 	ssl_protocols TLSv1.2 TLSv1.3;  # Enable only strong protocols
